@@ -16,6 +16,7 @@ import org.osiam.client.exception.UnauthorizedException;
 import org.osiam.client.oauth.AccessToken;
 import org.osiam.client.query.Query;
 import org.osiam.client.query.QueryResult;
+import org.osiam.client.query.fields.User_;
 import org.osiam.resources.scim.*;
 
 import java.io.FileReader;
@@ -205,11 +206,11 @@ public class OsiamUserServiceTest {
     }
 
     private void givenAQueryContainingDifficultCharacters() {
-        query = new Query.Builder(User.class).filter("name.formatted").contains("Schulz & Schulz Industries").build();
+        query = new Query.Builder(User.class).filter(User_.NAME.FORMATTED).contains("Schulz & Schulz Industries").build();
     }
 
     private void givenAQueryContainingDifficultCharactersAndSortBy() {
-        query = new Query.Builder(User.class).filter("name.formatted").contains("Schulz & Schulz Industries").sortBy("userName").build();
+        query = new Query.Builder(User.class).filter(User_.NAME.FORMATTED).contains("Schulz & Schulz Industries").sortBy(User_.USER_NAME).build();
     }
 
     private void givenAUserCanBeSearchedByQuery() {

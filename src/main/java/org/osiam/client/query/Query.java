@@ -144,7 +144,7 @@ public class Query {
          * @return A {@link Filter} to specify the filtering criteria
          * @throws org.osiam.client.exception.InvalidAttributeException if the given attribute is not valid for a query
          */
-        public Filter filter(String attributeName) {
+        public Filter filter(org.osiam.client.query.fields.Field attributeName) {
             return query(attributeName);
         }
 
@@ -155,7 +155,7 @@ public class Query {
          * @return A {@link Filter} to specify the filtering criteria
          * @throws org.osiam.client.exception.InvalidAttributeException if the given attribute is not valid for a query
          */
-        public Filter and(String attributeName) {
+        public Filter and(org.osiam.client.query.fields.Field attributeName) {
             filter.append(" and ");
             return query(attributeName);
         }
@@ -178,7 +178,7 @@ public class Query {
          * @return A {@link Filter} to specify the filtering criteria
          * @throws org.osiam.client.exception.InvalidAttributeException if the given attribute is not valid for a query
          */
-        public Filter or(String attributeName) {
+        public Filter or(org.osiam.client.query.fields.Field attributeName) {
             filter.append(" or ");
             return query(attributeName);
         }
@@ -233,11 +233,11 @@ public class Query {
          * @param attributeName attributes to sort by the query
          * @return The Builder with sortBy added.
          */
-        public Builder sortBy(String attributeName) {
-            if (!(isAttributeValid(attributeName))) {
+        public Builder sortBy(org.osiam.client.query.fields.Field attributeName) {
+            if (!(isAttributeValid(attributeName.toString()))) {
                 throw new InvalidAttributeException("Sorting for this attribute is not supported");
             }
-            sortBy = attributeName;
+            sortBy = attributeName.toString();
             return this;
         }
 
@@ -283,12 +283,12 @@ public class Query {
             }
         }
 
-        private Filter query(String attributeName) {
-            if (!(isAttributeValid(attributeName))) {
+        private Filter query(org.osiam.client.query.fields.Field attributeName) {
+            if (!(isAttributeValid(attributeName.toString()))) {
                 throw new InvalidAttributeException("Querying for this attribute is not supported");
             }
 
-            filter.append(attributeName);
+            filter.append(attributeName.toString());
             return new Filter(this);
         }
 

@@ -3,6 +3,9 @@ package org.osiam.client.query;
 import org.junit.Before;
 import org.junit.Test;
 import org.osiam.client.exception.InvalidAttributeException;
+import org.osiam.client.query.fields.Field;
+import org.osiam.client.query.fields.Group_;
+import org.osiam.client.query.fields.User_;
 import org.osiam.resources.scim.User;
 
 import static org.junit.Assert.assertEquals;
@@ -10,12 +13,13 @@ import static org.junit.Assert.fail;
 
 public class UserQueryBuilderTest {
 
-    private static final String DEFAULT_ATTR = "name";
-    private static final String VALID_META_ATTR = "meta.created";
-    private static final String VALID_NAME_ATTR = "name.givenName";
-    private static final String VALID_EMAIL_ATTR = "emails.value";
+    private static final Field DEFAULT_ATTR = User_.NAME.GIVEN_NAME;
+    private static final Field VALID_META_ATTR = User_.META.CREATED;
+    private static final Field VALID_NAME_ATTR = User_.NAME.GIVEN_NAME;
+    private static final Field VALID_EMAIL_ATTR = User_.ENAILS.VALUE;
     private static final String INVALID_EMAIL_ATTR = "emails.false";
     private static final String IRRELEVANT = "irrelevant";
+    private static final Field IRRELEVANT_FIELD = Group_.MEMBERS.VALUE;
     private static final int START_INDEX = 5;
     private static final int COUNT_PER_PAGE = 7;
     private static final String FILTER = "filter=";
@@ -116,12 +120,7 @@ public class UserQueryBuilderTest {
 
     @Test(expected = InvalidAttributeException.class)
     public void exception_raised_when_attr_is_not_valid() {
-        queryBuilder.filter(IRRELEVANT);
-    }
-
-    @Test(expected = InvalidAttributeException.class)
-    public void exception_raised_when_nested_attr_is_not_valid() {
-        queryBuilder.filter(INVALID_EMAIL_ATTR);
+        queryBuilder.filter(IRRELEVANT_FIELD);
     }
 
     @Test
@@ -224,25 +223,25 @@ public class UserQueryBuilderTest {
 
     @Test (expected = InvalidAttributeException.class)
     public void invalid_attribut_to_sort_by_added(){
-        queryBuilder.sortBy(IRRELEVANT);
+        queryBuilder.sortBy(IRRELEVANT_FIELD);
         fail("Exception excpected");
     }
 
     @Test (expected = InvalidAttributeException.class)
     public void invalid_attribut_to_filter_added(){
-        queryBuilder.filter(IRRELEVANT);
+        queryBuilder.filter(IRRELEVANT_FIELD);
         fail("Exception excpected");
     }
 
     @Test (expected = InvalidAttributeException.class)
     public void invalid_attribut_to_and_added(){
-        queryBuilder.and(IRRELEVANT);
+        queryBuilder.and(IRRELEVANT_FIELD);
         fail("Exception excpected");
     }
 
     @Test (expected = InvalidAttributeException.class)
     public void invalid_attribut_to_or_added(){
-        queryBuilder.or(IRRELEVANT);
+        queryBuilder.or(IRRELEVANT_FIELD);
         fail("Exception excpected");
     }
 
