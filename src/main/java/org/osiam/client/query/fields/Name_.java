@@ -1,6 +1,6 @@
 package org.osiam.client.query.fields;
 
-public class NAME_ {
+public class Name_ {
 
     public static final StringField formatted = new StringField("name.formatted");
     public static final StringField familyName = new StringField("name.familyName");

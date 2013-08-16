@@ -6,6 +6,8 @@ import org.osiam.client.exception.InvalidAttributeException;
 import org.osiam.client.query.fields.*;
 import org.osiam.resources.scim.User;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
@@ -25,10 +27,13 @@ public class UserQueryBuilderTest {
     private static final String FILTER = "filter=";
     private Query.Builder queryBuilder;
     private Date DATE = new Date();
+    private String DATE_STR;
 
     @Before
     public void setUp() {
         queryBuilder = new Query.Builder(User.class);
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        DATE_STR = df.format(DATE);
     }
 
     @Test
@@ -45,9 +50,8 @@ public class UserQueryBuilderTest {
 
     @Test
     public void nested_meta_attribute_is_added_to_query() {
-        Date date = new Date();
-        queryBuilder.filter(VALID_META_ATTR.equalTo(date));
-        buildStringMeetsExpectation(FILTER + VALID_META_ATTR.getAttribute() + " eq \"" + date.toString() + "\"");
+        queryBuilder.filter(VALID_META_ATTR.equalTo(DATE));
+        buildStringMeetsExpectation(FILTER + VALID_META_ATTR.getAttribute() + " eq \"" + DATE_STR + "\"");
     }
 
     @Test
@@ -97,25 +101,25 @@ public class UserQueryBuilderTest {
     @Test
     public void filter_greater_than_is_added_to_query() {
         queryBuilder.filter(VALID_META_ATTR.greaterThan(DATE));
-        buildStringMeetsExpectation(FILTER + VALID_META_ATTR.getAttribute() + " gt \"" + DATE + "\"");
+        buildStringMeetsExpectation(FILTER + VALID_META_ATTR.getAttribute() + " gt \"" + DATE_STR + "\"");
     }
 
     @Test
     public void filter_greater_equals_is_added_to_query() {
         queryBuilder.filter(VALID_META_ATTR.greaterEquals(DATE));
-        buildStringMeetsExpectation(FILTER + VALID_META_ATTR.getAttribute() + " ge \"" + DATE + "\"");
+        buildStringMeetsExpectation(FILTER + VALID_META_ATTR.getAttribute() + " ge \"" + DATE_STR + "\"");
     }
 
     @Test
     public void filter_less_than_is_added_to_query() {
         queryBuilder.filter(VALID_META_ATTR.lessThan(DATE));
-        buildStringMeetsExpectation(FILTER + VALID_META_ATTR.getAttribute() + " lt \"" + DATE + "\"");
+        buildStringMeetsExpectation(FILTER + VALID_META_ATTR.getAttribute() + " lt \"" + DATE_STR + "\"");
     }
 
     @Test
     public void filter_less_equals_is_added_to_query() {
         queryBuilder.filter(VALID_META_ATTR.lessEquals(DATE));
-        buildStringMeetsExpectation(FILTER + VALID_META_ATTR.getAttribute() + " le \"" + DATE + "\"");
+        buildStringMeetsExpectation(FILTER + VALID_META_ATTR.getAttribute() + " le \"" + DATE_STR + "\"");
     }
 
     @Test(expected = InvalidAttributeException.class)

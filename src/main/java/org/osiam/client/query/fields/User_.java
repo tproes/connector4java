@@ -1,17 +1,13 @@
 package org.osiam.client.query.fields;
 
 
-import org.osiam.resources.scim.User;
-
-import javax.persistence.metamodel.SingularAttribute;
-
 public abstract class User_ {
 
     public static final StringField id = new StringField("id");
     public static final StringField externalId = new StringField("externalId");
     public static volatile Meta_ meta;
     public static final StringField userName = new StringField("userName");
-    public static volatile NAME_ name;
+    public static volatile Name_ name;
     public static final StringField displayName = new StringField("displayName");
     public static final StringField nickName = new StringField("nickName");
     public static final StringField profileUrl = new StringField("profileUrl");
