@@ -1,4 +1,4 @@
-package org.osiam.client.query.fields;
+package org.osiam.client.query.metamodel;
 
 /**
  * Created with IntelliJ IDEA.
@@ -7,10 +7,11 @@ package org.osiam.client.query.fields;
  * Time: 09:10
  * To change this template use File | Settings | File Templates.
  */
-public class FilterTry {
+public class Filter {
 
     private String filter;
-    FilterTry(String filter){
+
+    Filter(String filter){
         this.filter = filter;
     }
 

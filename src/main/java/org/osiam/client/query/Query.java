@@ -3,10 +3,9 @@ package org.osiam.client.query;
  * for licensing see the file license.txt.
  */
 
-import org.joda.time.DateTimeComparator;
 import org.osiam.client.exception.InvalidAttributeException;
-import org.osiam.client.query.fields.Attribute;
-import org.osiam.client.query.fields.FilterTry;
+import org.osiam.client.query.metamodel.Attribute;
+import org.osiam.client.query.metamodel.Filter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -144,10 +143,11 @@ public class Query {
          * Add a filter on the given Attribute.
          *
          * @param filter The name of the attribute to filter on.
-         * @return A {@link FilterTry} to specify the filtering criteria
+         * @return A {@link org.osiam.client.query.metamodel.Filter} to specify the filtering criteria
          * @throws org.osiam.client.exception.InvalidAttributeException if the given attribute is not valid for a query
          */
-        public Builder filter(FilterTry filter) {
+        public Builder filter(Filter filter) {
+            filterBuilder = new StringBuilder();
             return query(filter);
         }
 
@@ -155,10 +155,11 @@ public class Query {
          * Add an 'logical and' operation to the filter with another attribute to filter on.
          *
          * @param filter The name of the attribute to filter the and clause on.
-         * @return A {@link FilterTry} to specify the filtering criteria
+         * @return A {@link org.osiam.client.query.metamodel.Filter} to specify the filtering criteria
          * @throws org.osiam.client.exception.InvalidAttributeException if the given attribute is not valid for a query
          */
-        public Builder and(FilterTry filter) {
+        public Builder and(Filter filter) {
+            ensureFilterBuilderHasBeenCalledFirst();
             filterBuilder.append(" and ");
             return query(filter);
         }
@@ -170,6 +171,7 @@ public class Query {
          * @return The Builder with the inner filter added.
          */
         public Builder and(Builder innerFilter) {
+            ensureFilterBuilderHasBeenCalledFirst();
             filterBuilder.append(" and (").append(innerFilter.filterBuilder).append(")");
             return this;
         }
@@ -178,10 +180,11 @@ public class Query {
          * Add an 'logical or' operation to the filter with another attribute to filter on.
          *
          * @param filter The name of the attribute to filter the or clause on.
-         * @return A {@link FilterTry} to specify the filtering criteria
+         * @return A {@link org.osiam.client.query.metamodel.Filter} to specify the filtering criteria
          * @throws org.osiam.client.exception.InvalidAttributeException if the given attribute is not valid for a query
          */
-        public Builder or(FilterTry filter) {
+        public Builder or(Filter filter) {
+            ensureFilterBuilderHasBeenCalledFirst();
             filterBuilder.append(" or ");
             return query(filter);
         }
@@ -193,6 +196,7 @@ public class Query {
          * @return The Builder with the filter in parentheses added.
          */
         public Builder or(Builder innerFilter) {
+            ensureFilterBuilderHasBeenCalledFirst();
             filterBuilder.append(" or (").append(innerFilter.filterBuilder).append(")");
             return this;
         }
@@ -280,13 +284,19 @@ public class Query {
             return new Query(builder.toString());
         }
 
+        private void ensureFilterBuilderHasBeenCalledFirst(){
+            if(filterBuilder.length() == 0){
+                throw new IllegalStateException("Method filter has to be called first");
+            }
+        }
+
         private void ensureQueryParamIsSeparated(StringBuilder builder) {
             if (builder.length() != 0) {
                 builder.append("&");
             }
         }
 
-        private Builder query(FilterTry filter) {
+        private Builder query(Filter filter) {
             if (!(isAttributeValid(filter))) {
                 throw new InvalidAttributeException("Querying for this attribute is not supported");
             }
@@ -295,7 +305,7 @@ public class Query {
             return this;
         }
 
-        private boolean isAttributeValid(FilterTry filter) {
+        private boolean isAttributeValid(Filter filter) {
             String attribute = filter.toString().substring(0, filter.toString().indexOf(" "));
             return isAttributeValid(attribute, clazz);
         }

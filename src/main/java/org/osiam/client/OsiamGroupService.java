@@ -60,7 +60,7 @@ public class OsiamGroupService extends AbstractOsiamService<Group> {
 
     /**
      * Search for existing groups by a given search string. For more detailed information about the possible logical
-     * operators and usable fields please have a look into the wiki.
+     * operators and usable attribute please have a look into the wiki.
      *
      * @param queryString a string containing the needed search where statement
      * @param accessToken the OSIAM access token from for the current session

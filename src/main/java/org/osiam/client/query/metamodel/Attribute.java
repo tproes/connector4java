@@ -1,4 +1,4 @@
-package org.osiam.client.query.fields;
+package org.osiam.client.query.metamodel;
 
 /**
  * Created with IntelliJ IDEA.
@@ -7,13 +7,11 @@ package org.osiam.client.query.fields;
  * Time: 16:20
  * To change this template use File | Settings | File Templates.
  */
-public class Attribute {
+public abstract class Attribute {
 
-    private String value = "";
+    protected String value = "";
 
-    Attribute(String value){
-        this.value = value;
-    }
+    Attribute(){}
 
     public String toString(){
         return value;
