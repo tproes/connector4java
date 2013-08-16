@@ -9,6 +9,6 @@ package org.osiam.client.query.fields;
  */
  public abstract class UserGroups_ {
 
-    public static final Field VALUE = new Field("groups.value");
-    public static final Field TYPE = new Field("groups.type");
+    public static final StringField value = new StringField("groups.value");
+    public static final StringField type = new StringField("groups.type");
 }

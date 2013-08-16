@@ -9,6 +9,6 @@ package org.osiam.client.query.fields;
  */
  public abstract class PhoneNumbers_ {
 
-    public static final Field VALUE = new Field("phoneNumbers.value");
-    public static final Field TYPE = new Field("phoneNumbers.type");
+    public static final StringField value = new StringField("phoneNumbers.value");
+    public static final StringField type = new StringField("phoneNumbers.type");
 }

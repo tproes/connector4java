@@ -9,6 +9,6 @@ package org.osiam.client.query.fields;
  */
  public abstract class Roles_ {
 
-    public static final Field VALUE = new Field("roles.value");
-    public static final Field TYPE = new Field("roles.type");
+    public static final StringField value = new StringField("roles.value");
+    public static final StringField type = new StringField("roles.type");
 }

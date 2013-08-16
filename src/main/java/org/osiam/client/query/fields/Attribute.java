@@ -7,11 +7,11 @@ package org.osiam.client.query.fields;
  * Time: 16:20
  * To change this template use File | Settings | File Templates.
  */
-public class Field {
+public class Attribute {
 
     private String value = "";
 
-    Field(String value){
+    Attribute(String value){
         this.value = value;
     }
 

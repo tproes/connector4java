@@ -9,6 +9,6 @@ package org.osiam.client.query.fields;
  */
  public abstract class Entitlements_ {
 
-    public static final Field VALUE = new Field("entitlements.value");
-    public static final Field TYPE = new Field("entitlements.type");
+    public static final StringField value = new StringField("entitlements.value");
+    public static final StringField type = new StringField("entitlements.type");
 }

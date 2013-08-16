@@ -3,7 +3,10 @@ package org.osiam.client.query;
  * for licensing see the file license.txt.
  */
 
+import org.joda.time.DateTimeComparator;
 import org.osiam.client.exception.InvalidAttributeException;
+import org.osiam.client.query.fields.Attribute;
+import org.osiam.client.query.fields.FilterTry;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -121,7 +124,7 @@ public class Query {
         static final private int DEFAULT_START_INDEX = 0;
         static final private int DEFAULT_COUNT_PER_PAGE = 100;
         private Class clazz;
-        private StringBuilder filter;
+        private StringBuilder filterBuilder;
         private String sortBy;
         private SortOrder sortOrder;
         private int startIndex = DEFAULT_START_INDEX;
@@ -133,31 +136,31 @@ public class Query {
          * @param clazz The class of Resources to query for.
          */
         public Builder(Class clazz) {
-            filter = new StringBuilder();
+            filterBuilder = new StringBuilder();
             this.clazz = clazz;
         }
 
         /**
          * Add a filter on the given Attribute.
          *
-         * @param attributeName The name of the attribute to filter on.
-         * @return A {@link Filter} to specify the filtering criteria
+         * @param filter The name of the attribute to filter on.
+         * @return A {@link FilterTry} to specify the filtering criteria
          * @throws org.osiam.client.exception.InvalidAttributeException if the given attribute is not valid for a query
          */
-        public Filter filter(org.osiam.client.query.fields.Field attributeName) {
-            return query(attributeName);
+        public Builder filter(FilterTry filter) {
+            return query(filter);
         }
 
         /**
          * Add an 'logical and' operation to the filter with another attribute to filter on.
          *
-         * @param attributeName The name of the attribute to filter the and clause on.
-         * @return A {@link Filter} to specify the filtering criteria
+         * @param filter The name of the attribute to filter the and clause on.
+         * @return A {@link FilterTry} to specify the filtering criteria
          * @throws org.osiam.client.exception.InvalidAttributeException if the given attribute is not valid for a query
          */
-        public Filter and(org.osiam.client.query.fields.Field attributeName) {
-            filter.append(" and ");
-            return query(attributeName);
+        public Builder and(FilterTry filter) {
+            filterBuilder.append(" and ");
+            return query(filter);
         }
 
         /**
@@ -167,20 +170,20 @@ public class Query {
          * @return The Builder with the inner filter added.
          */
         public Builder and(Builder innerFilter) {
-            filter.append(" and (").append(innerFilter.filter).append(")");
+            filterBuilder.append(" and (").append(innerFilter.filterBuilder).append(")");
             return this;
         }
 
         /**
          * Add an 'logical or' operation to the filter with another attribute to filter on.
          *
-         * @param attributeName The name of the attribute to filter the or clause on.
-         * @return A {@link Filter} to specify the filtering criteria
+         * @param filter The name of the attribute to filter the or clause on.
+         * @return A {@link FilterTry} to specify the filtering criteria
          * @throws org.osiam.client.exception.InvalidAttributeException if the given attribute is not valid for a query
          */
-        public Filter or(org.osiam.client.query.fields.Field attributeName) {
-            filter.append(" or ");
-            return query(attributeName);
+        public Builder or(FilterTry filter) {
+            filterBuilder.append(" or ");
+            return query(filter);
         }
 
         /**
@@ -190,7 +193,7 @@ public class Query {
          * @return The Builder with the filter in parentheses added.
          */
         public Builder or(Builder innerFilter) {
-            filter.append(" or (").append(innerFilter.filter).append(")");
+            filterBuilder.append(" or (").append(innerFilter.filterBuilder).append(")");
             return this;
         }
 
@@ -230,14 +233,14 @@ public class Query {
         /**
          * Add the wanted attribute names to the sortBy statement.
          *
-         * @param attributeName attributes to sort by the query
+         * @param attribute attributes to sort by the query
          * @return The Builder with sortBy added.
          */
-        public Builder sortBy(org.osiam.client.query.fields.Field attributeName) {
-            if (!(isAttributeValid(attributeName.toString()))) {
+        public Builder sortBy(Attribute attribute) {
+            if (!(isAttributeValid(attribute.toString()))) {
                 throw new InvalidAttributeException("Sorting for this attribute is not supported");
             }
-            sortBy = attributeName.toString();
+            sortBy = attribute.toString();
             return this;
         }
 
@@ -248,10 +251,10 @@ public class Query {
          */
         public Query build() {
             StringBuilder builder = new StringBuilder();
-            if (filter.length() != 0) {
+            if (filterBuilder.length() != 0) {
                 ensureQueryParamIsSeparated(builder);
                 builder.append("filter=")
-                        .append(filter);
+                        .append(filterBuilder);
             }
             if (sortBy != null) {
                 ensureQueryParamIsSeparated(builder);
@@ -283,13 +286,18 @@ public class Query {
             }
         }
 
-        private Filter query(org.osiam.client.query.fields.Field attributeName) {
-            if (!(isAttributeValid(attributeName.toString()))) {
+        private Builder query(FilterTry filter) {
+            if (!(isAttributeValid(filter))) {
                 throw new InvalidAttributeException("Querying for this attribute is not supported");
             }
 
-            filter.append(attributeName.toString());
-            return new Filter(this);
+            filterBuilder.append(filter.toString());
+            return this;
+        }
+
+        private boolean isAttributeValid(FilterTry filter) {
+            String attribute = filter.toString().substring(0, filter.toString().indexOf(" "));
+            return isAttributeValid(attribute, clazz);
         }
 
         private boolean isAttributeValid(String attribute) {
@@ -320,106 +328,5 @@ public class Query {
         }
     }
 
-    /**
-     * A Filter is used to produce filter criteria for the query. At this point the conditions are mere strings.
-     * This is going to change.
-     */
-    public static final class Filter {
 
-        private Builder qb;
-
-        private Filter(Builder builder) {
-            this.qb = builder;
-        }
-
-        private Builder addFilter(String filter, String condition) {
-            qb.filter.append(filter);
-
-            if (condition != null && condition.length() > 0) {
-                qb.filter.append("\"").
-                        append(condition).
-                        append("\"");
-            }
-            return qb;
-        }
-
-        /**
-         * Add a condition the attribute filtered for is equal to.
-         *
-         * @param condition The condition to meet.
-         * @return The Builder with this filter added.
-         */
-        public Builder equalTo(String condition) {
-            return addFilter(" eq ", condition);
-        }
-
-        /**
-         * Add a condition the attribute filtered on should contain.
-         *
-         * @param condition The condition to meet.
-         * @return The Builder with this filter added.
-         */
-        public Builder contains(String condition) {
-            return addFilter(" co ", condition);
-        }
-
-        /**
-         * Add a condition the attribute filtered on should contain.
-         *
-         * @param condition The condition to meet.
-         * @return The Builder with this filter added.
-         */
-        public Builder startsWith(String condition) {
-            return addFilter(" sw ", condition);
-        }
-
-        /**
-         * Make sure that the attribute for this filter is present.
-         *
-         * @return The Builder with this filter added.
-         */
-        public Builder present() {
-            return addFilter(" pr ", "");
-        }
-
-        /**
-         * Add a condition the attribute filtered on should be greater than.
-         *
-         * @param condition The condition to meet.
-         * @return The Builder with this filter added.
-         */
-        public Builder greaterThan(String condition) {
-            return addFilter(" gt ", condition);
-        }
-
-        /**
-         * Add a condition the attribute filtered on should be greater than or equal to.
-         *
-         * @param condition The condition to meet.
-         * @return The Builder with this filter added.
-         */
-        public Builder greaterEquals(String condition) {
-            return addFilter(" ge ", condition);
-        }
-
-        /**
-         * Add a condition the attribute filtered on should be less than.
-         *
-         * @param condition The condition to meet.
-         * @return The Builder with this filter added.
-         */
-        public Builder lessThan(String condition) {
-            return addFilter(" lt ", condition);
-        }
-
-        /**
-         * Add a condition the attribute filtered on should be less than or equal to.
-         *
-         * @param condition The condition to meet.
-         * @return The Builder with this filter added.
-         */
-        public Builder lessEquals(String condition) {
-            return addFilter(" le ", condition);
-        }
-    }
 }

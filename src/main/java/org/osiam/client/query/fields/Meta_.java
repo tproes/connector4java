@@ -4,10 +4,10 @@ import sun.font.CreatedFontTracker;
 
 public abstract class Meta_ {
 
-    public static final Field RESOURCE_TYPE = new Field("meta.resourceType");
-    public static final Field CREATED = new Field("meta.created");
-    public static final Field LAST_MODIFIED = new Field("meta.lastModified");
-    public static final Field LOCATION = new Field("meta.location");
-    public static final Field VERSION = new Field("meta.version");
+    public static final StringField resourceType = new StringField("meta.resourceType");
+    public static final DateField created = new DateField("meta.created");
+    public static final DateField lastModified = new DateField("meta.lastModified");
+    public static final StringField location = new StringField("meta.location");
+    public static final StringField version = new StringField("meta.version");
 
 }

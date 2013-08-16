@@ -5,7 +5,6 @@ package org.osiam.client;
 
 import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -206,11 +205,11 @@ public class OsiamUserServiceTest {
     }
 
     private void givenAQueryContainingDifficultCharacters() {
-        query = new Query.Builder(User.class).filter(User_.NAME.FORMATTED).contains("Schulz & Schulz Industries").build();
+        query = new Query.Builder(User.class).filter(User_.name.formatted.contains("Schulz & Schulz Industries")).build();
     }
 
     private void givenAQueryContainingDifficultCharactersAndSortBy() {
-        query = new Query.Builder(User.class).filter(User_.NAME.FORMATTED).contains("Schulz & Schulz Industries").sortBy(User_.USER_NAME).build();
+        query = new Query.Builder(User.class).filter(User_.name.formatted.contains("Schulz & Schulz Industries")).sortBy(User_.userName.getAttribute()).build();
     }
 
     private void givenAUserCanBeSearchedByQuery() {

@@ -9,6 +9,6 @@ package org.osiam.client.query.fields;
  */
  public abstract class Ims_ {
 
-    public static final Field VALUE = new Field("ims.value");
-    public static final Field TYPE = new Field("ims.type");
+    public static final StringField value = new StringField("ims.value");
+    public static final StringField type = new StringField("ims.type");
 }
