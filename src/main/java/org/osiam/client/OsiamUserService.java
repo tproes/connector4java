@@ -55,7 +55,15 @@ public final class OsiamUserService extends AbstractOsiamService<User> { // NOSO
     public User getUserByUUID(UUID id, AccessToken accessToken) {
         return getResourceByUUID(id, accessToken);
     }
-
+    
+    public void deleteUserByUUID(UUID id, AccessToken accessToken) {
+        deleteResourceByUUID(id, accessToken);
+    }
+    
+    public User createUser(User user , AccessToken accessToken) {
+        return createResource(user , accessToken);
+    }
+    
     /**
      * Retrieve the User with the who holds the given access token.
      * @param accessToken
